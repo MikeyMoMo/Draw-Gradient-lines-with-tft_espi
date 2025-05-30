@@ -18,6 +18,11 @@ void setup() {
 
   ledcAttach(TFT_BL, 5000, 8);  // PWM timer automatically assigned.
   ledcWrite(TFT_BL, 200);       // Turn the display on bigly for init messages.
+
+  for (int i = 0; i < 100; i++)
+    drawGradientLine(0, i, tft.width(), i, TFT_RED, TFT_BLUE);
+  for (int i = 101; i < 200; i++)
+    drawGradientLine(0, i, tft.width(), i, TFT_GREEN, TFT_WHITE);
 }
 
 void drawGradientLine(int x0, int y0, int x1, int y1, uint16_t colorStart, uint16_t colorEnd) {
@@ -25,7 +30,7 @@ void drawGradientLine(int x0, int y0, int x1, int y1, uint16_t colorStart, uint1
 
   for (int i = 0; i <= steps; i++) {
     float ratio = (float)i / steps;
-    uint16_t blendedColor = alphaBlend((uint8_t)(ratio * 255), colorStart, colorEnd);
+    uint16_t blendedColor = alphaBlend((uint8_t)(ratio * 255), colorEnd, colorStart);
     int x = x0 + (x1 - x0) * ratio;
     int y = y0 + (y1 - y0) * ratio;
     tft.drawPixel(x, y, blendedColor);
@@ -33,7 +38,4 @@ void drawGradientLine(int x0, int y0, int x1, int y1, uint16_t colorStart, uint1
 }
 
 void loop() {
-  for (int i = 20; i < 220; i++) 
-  drawGradientLine(0, i, tft.width(), i, TFT_RED, TFT_BLUE);
-  while (true); // Halt execution
 }
