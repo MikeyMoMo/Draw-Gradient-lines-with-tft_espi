@@ -1,6 +1,9 @@
 #include <TFT_eSPI.h>
 
 TFT_eSPI tft = TFT_eSPI();
+bool doShow = false;
+float pctDone;
+uint16_t blendedColor;
 
 uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc) {
   uint32_t rxb = bgc & 0xF81F;
@@ -14,28 +17,62 @@ void setup() {
   Serial.begin(115200); delay(2000);
   tft.init();
   tft.setRotation(3);
-  tft.fillScreen(TFT_BLACK);
+  tft.fillScreen(TFT_WHITE);
 
   ledcAttach(TFT_BL, 5000, 8);  // PWM timer automatically assigned.
   ledcWrite(TFT_BL, 200);       // Turn the display on bigly for init messages.
-
-  for (int i = 0; i < 100; i++)
-    drawGradientLine(0, i, tft.width(), i, TFT_RED, TFT_BLUE);
-  for (int i = 101; i < 200; i++)
-    drawGradientLine(0, i, tft.width(), i, TFT_GREEN, TFT_WHITE);
 }
 
+// This ONLY draws orthogonal lines, NO diagonals!
 void drawGradientLine(int x0, int y0, int x1, int y1, uint16_t colorStart, uint16_t colorEnd) {
   int steps = abs(x1 - x0) > abs(y1 - y0) ? abs(x1 - x0) : abs(y1 - y0);
-
+  if (doShow) Serial.printf("Steps: %i\r\n", steps);
+  int x = x0, y = y0;
   for (int i = 0; i <= steps; i++) {
-    float ratio = (float)i / steps;
-    uint16_t blendedColor = alphaBlend((uint8_t)(ratio * 255), colorEnd, colorStart);
-    int x = x0 + (x1 - x0) * ratio;
-    int y = y0 + (y1 - y0) * ratio;
+    pctDone = (float)i / steps;
+    blendedColor = alphaBlend((uint8_t)(pctDone * 255), colorEnd, colorStart);
+    if (doShow) Serial.printf("x %i, y %i, pctDone %f\r\n", x, y, pctDone);
     tft.drawPixel(x, y, blendedColor);
+    if ((x0 - x1) == 0) y1 > y0 ? y++ : y--;
+    if ((y0 - y1) == 0) x1 > x0 ? x++ : x--;
   }
 }
 
 void loop() {
+  //Vertical lines
+  Serial.println("Vertical part 1");
+  for (int x = 0; x < tft.width() / 2; x++) {
+    if (x == 0)
+      doShow = true;
+    else
+      doShow = false;
+    drawGradientLine(x, tft.height() - 1, x, 0,
+                     //Bottom, Top
+                     TFT_BLUE, TFT_RED);
+  }
+  delay(5000);
+  Serial.println("Vertical part 2");
+  for (int x = tft.width() / 2; x < tft.width(); x++) {
+    if (x == tft.width() / 2)
+      doShow = true;
+    else
+      doShow = false;
+    drawGradientLine(x, 0, x, tft.height() - 1,
+                     //Top,    Bottom
+                     TFT_WHITE, TFT_GREEN);
+  }
+  delay(10000);
+  tft.fillScreen(TFT_WHITE);
+
+  // Horizontal lines
+  for (int y = 0; y < tft.height() / 2 - 1 ; y++)
+    drawGradientLine(0, y, tft.width(), y,
+                     //Left,  Right
+                     TFT_RED, TFT_BLUE);
+  for (int y = tft.height() / 2; y < tft.height() - 1; y++)
+    drawGradientLine(0, y, tft.width(), y,
+                     //Left,    Right
+                     TFT_GREEN, TFT_WHITE);
+  delay(10000);
+  tft.fillScreen(TFT_WHITE);
 }
