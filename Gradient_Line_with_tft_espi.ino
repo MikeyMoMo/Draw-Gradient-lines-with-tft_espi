@@ -15,18 +15,23 @@ void setup()
   Serial.begin(115200); delay(2000);
   tft.init();
   tft.setRotation(3);
+  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  tft.setTextDatum(TC_DATUM);
   tft.fillScreen(TFT_BLACK);
 
   int *a = 0;
   a = (int*)fsSprite.createSprite(tft.width(), tft.height());
   if (a == 0) {
-    tft.setTextDatum(TC_DATUM);
     tft.drawString("Sprite creation failed", tft.width() / 2, 30, 4);
     tft.drawString("Cannot continue.", tft.width() / 2, 90, 4);
     Serial.println("fsSprite creation failed.  Cannot continue.");
     while (1);
   }
   Serial.printf("createfsSprite returned: %p\r\n", a);
+
+  fsSprite.setTextColor(TFT_YELLOW, TFT_BLACK);
+  fsSprite.setTextDatum(TC_DATUM);
+  fsSprite.fillScreen(TFT_BLACK);
 
   fsSprite.fillSprite(TFT_WHITE);
 
@@ -37,19 +42,23 @@ void setup()
 void loop()
 /***************************************************************************/
 {
+  static int x, y;
 
   //Vertical lines
-
+  //  This draws pixels from the bottom of the display to the top and
+  //   draws rows from left to right.
   Serial.println("Vertical part 1");
-  for (int x = 0; x < fsSprite.width() / 2; x++) {
+  for (x = 0; x < fsSprite.width() / 2; x++) {
     drawGradientLine (&fsSprite, x, fsSprite.height() - 1, x, 0,
                       0, TFT_RED, TFT_BLUE);  // top, bottom
   }
   fsSprite.pushSprite(0, 0);
   delay(1000);
 
+  //  This draws pixels from the bottom of the display to the top and
+  //   draws rows from left to right.
   Serial.println("Vertical part 2");
-  for (int x = tft.width() / 2; x < fsSprite.width(); x++) {
+  for (x = tft.width() / 2; x < fsSprite.width(); x++) {
     drawGradientLine (&fsSprite, x, fsSprite.height() - 1, x, 0,
                       0, TFT_GREEN, TFT_WHITE);  // top, bottom
   }
@@ -61,15 +70,18 @@ void loop()
   // Horizontal lines
 
   Serial.println("Horizontal part 1");
-  for (int y = 0; y < fsSprite.height() / 2 - 1 ; y++)
+  //  This draws rows from the top of the display to the bottom and
+  //   draws pixels left to right.
+  for (y = 0; y < fsSprite.height() / 2 - 1 ; y++)
     drawGradientLine (&fsSprite, 0, y, fsSprite.width(), y,
                       0, TFT_BLUE, TFT_RED);  // right, left
-
   fsSprite.pushSprite(0, 0);
   delay(1000);
 
+  //  This draws rows from the top of the display to the bottom and
+  //   draws pixels left to right.
   Serial.println("Horizontal part 2");
-  for (int y = tft.height() / 2; y < tft.height() - 1; y++)
+  for (y = tft.height() / 2; y < tft.height() - 1; y++)
     drawGradientLine (&fsSprite, 0, y, fsSprite.width(), y,
                       0, TFT_WHITE, TFT_GREEN);  // right, left
   fsSprite.pushSprite(0, 0);
@@ -79,38 +91,55 @@ void loop()
   // Variable length
 
   Serial.println("Variable length, variable gradient.");
-  for (int x = 0; x < fsSprite.height(); x++) {
+  //  This draws pixels from the bottom of the display to the top and
+  //   draws rows from left to right.
+  for (x = 0; x < fsSprite.height(); x++)
     drawGradientLine (&fsSprite, x, x, x, fsSprite.height(),
                       0, TFT_BLUE, TFT_RED);  // bottom, top
-  }
-  fsSprite.drawString("Variable Gradient", 100, 20, 4);
+  fsSprite.drawString("Variable gradient", tft.width()/2, 5, 4);
   fsSprite.pushSprite(0, 0);
-  delay(5000);
+  delay(4000);
   fsSprite.fillSprite(TFT_BLACK);
 
   Serial.println("Variable length, fixed gradient.");
-  for (int x = 0; x < fsSprite.height(); x++) {
+  //  This draws pixels from the bottom of the display to the top and
+  //   draws rows from left to right.
+  for (x = 0; x < fsSprite.height(); x++)
     drawGradientLine (&fsSprite, x, fsSprite.height(), x, x,
                       fsSprite.height(),  TFT_RED, TFT_BLUE);  // top, bottom
-  }
-  fsSprite.drawString("Fixed Gradient", 100, 20, 4);
+  fsSprite.drawString("Fixed gradient", tft.width()/2, 5, 4);
 
   fsSprite.pushSprite(0, 0);
-
-  delay(5000);
+  delay(4000);
   fsSprite.fillSprite(TFT_BLACK);
 
   Serial.println("Variable length, short gradient.");
-  for (int x = 0; x < fsSprite.height(); x++) {
+  //  This draws pixels from the bottom of the display to the top and
+  //   draws rows from left to right.
+  for (x = 0; x < fsSprite.height(); x++)
     drawGradientLine (&fsSprite,
                       x, fsSprite.height(), x, x, fsSprite.height() / 2,
                       //top,    bottom.  Yeah, I know!
                       TFT_RED, TFT_BLUE); // top, bottom
-  }
-  fsSprite.drawString("Short Gradient", 100, 20, 4);
+  fsSprite.drawString("Short Variable gradient (0.5)", tft.width()/2, 5, 4);
 
   fsSprite.pushSprite(0, 0);
-  delay(5000);
+  delay(4000);
+  fsSprite.fillSprite(TFT_BLACK);
+
+  Serial.println("Variable length, long gradient.");
+  //  This draws pixels from the bottom of the display to the top and
+  //   draws rows from left to right.
+  for (x = 0; x < fsSprite.height(); x++)
+    drawGradientLine (&fsSprite,
+                      x, fsSprite.height(), x, x, fsSprite.height() * 1.25,
+                      //top,    bottom.  Yeah, I know!
+                      TFT_RED, TFT_BLUE); // top, bottom
+  fsSprite.drawString("Long Variable gradient (1.25)", tft.width()/2, 5, 4);
+
+  fsSprite.pushSprite(0, 0);
+  delay(4000);
+
   fsSprite.fillSprite(TFT_WHITE);
 }
 /***************************************************************************/
@@ -135,7 +164,7 @@ void drawGradientLine(TFT_eSprite *targetLayer,
   //                x1, y2, x2, y1, steps, blendLvls);
   x = x1; y = y1;
   for (int i = 0; i <= steps; i++) {
-    // Short Gradient -- if the gradient length is less than the length of the 
+    // Short Gradient -- if the gradient length is less than the length of the
     //  line, just stick at 100% (1.0) until the end, thereby giving a larger
     //  ending color area.  Sometimes, it seems like the ending color is too small
     //  to do the graph justice.
