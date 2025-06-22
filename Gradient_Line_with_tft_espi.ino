@@ -83,7 +83,7 @@ void loop()
     drawGradientLine (&fsSprite, x, x, x, fsSprite.height(),
                       0, TFT_BLUE, TFT_RED);  // bottom, top
   }
-  fsSprite.drawString("Variable gradient", 100, 20, 4);
+  fsSprite.drawString("Variable Gradient", 100, 20, 4);
   fsSprite.pushSprite(0, 0);
   delay(5000);
   fsSprite.fillSprite(TFT_BLACK);
@@ -93,7 +93,7 @@ void loop()
     drawGradientLine (&fsSprite, x, fsSprite.height(), x, x,
                       fsSprite.height(),  TFT_RED, TFT_BLUE);  // top, bottom
   }
-  fsSprite.drawString("Fixed gradient", 100, 20, 4);
+  fsSprite.drawString("Fixed Gradient", 100, 20, 4);
 
   fsSprite.pushSprite(0, 0);
 
@@ -107,7 +107,7 @@ void loop()
                       //top,    bottom.  Yeah, I know!
                       TFT_RED, TFT_BLUE); // top, bottom
   }
-  fsSprite.drawString("Short gradient", 100, 20, 4);
+  fsSprite.drawString("Short Gradient", 100, 20, 4);
 
   fsSprite.pushSprite(0, 0);
   delay(5000);
