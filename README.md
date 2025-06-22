@@ -15,6 +15,8 @@ I have 3 variations of the gradient line you can use:
 
 3. Force the gradient to change prematurely.  This function compresses the gradient change into an area less than the length of the line.  This can highlight the ending color that I have found, sometimes, seemes too compressed to really show up well.  See this in the third triangular demo "Short Gradient".
 
+4. You can also force the change the other way, i.e., late.  Just make the steps larger than the line length.  See it in the example program.
+
 The gradient routine determines whether you are trying to draw vertically or horizontally.  There is no need for indication of this in the routine call.
 
 Enjoy,
