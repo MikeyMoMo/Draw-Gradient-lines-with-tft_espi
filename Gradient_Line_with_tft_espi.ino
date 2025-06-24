@@ -36,7 +36,7 @@ void setup()
   fsSprite.fillSprite(TFT_WHITE);
 
   ledcAttach(TFT_BL, 5000, 8);  // PWM timer automatically assigned.
-  ledcWrite(TFT_BL, 200);       // Turn the display on bigly for init messages.
+  ledcWrite(TFT_BL, 200);     // Turn the display on bigly for init messages.
 }
 /***************************************************************************/
 void loop()
@@ -96,7 +96,7 @@ void loop()
   for (x = 0; x < fsSprite.height(); x++)
     drawGradientLine (&fsSprite, x, x, x, fsSprite.height(),
                       0, TFT_BLUE, TFT_RED);  // bottom, top
-  fsSprite.drawString("Variable gradient", tft.width()/2, 5, 4);
+  fsSprite.drawString("Variable gradient", tft.width() / 2, 5, 4);
   fsSprite.pushSprite(0, 0);
   delay(4000);
   fsSprite.fillSprite(TFT_BLACK);
@@ -106,8 +106,8 @@ void loop()
   //   draws rows from left to right.
   for (x = 0; x < fsSprite.height(); x++)
     drawGradientLine (&fsSprite, x, fsSprite.height(), x, x,
-                      fsSprite.height(),  TFT_RED, TFT_BLUE);  // top, bottom
-  fsSprite.drawString("Fixed gradient", tft.width()/2, 5, 4);
+                      fsSprite.height(),  TFT_RED, TFT_BLUE);  // top, bot
+  fsSprite.drawString("Fixed gradient", tft.width() / 2, 5, 4);
 
   fsSprite.pushSprite(0, 0);
   delay(4000);
@@ -121,7 +121,10 @@ void loop()
                       x, fsSprite.height(), x, x, fsSprite.height() / 2,
                       //top,    bottom.  Yeah, I know!
                       TFT_RED, TFT_BLUE); // top, bottom
-  fsSprite.drawString("Short Variable gradient (0.5)", tft.width()/2, 5, 4);
+  fsSprite.drawString("Fixed gradient",
+                      tft.width() / 2, 5, 4);
+  fsSprite.drawString("Short (0.5)",
+                      tft.width() / 2, 35, 4);
 
   fsSprite.pushSprite(0, 0);
   delay(4000);
@@ -135,7 +138,10 @@ void loop()
                       x, fsSprite.height(), x, x, fsSprite.height() * 1.25,
                       //top,    bottom.  Yeah, I know!
                       TFT_RED, TFT_BLUE); // top, bottom
-  fsSprite.drawString("Long Variable gradient (1.25)", tft.width()/2, 5, 4);
+  fsSprite.drawString("Fixed gradient",
+                      tft.width() / 2, 5, 4);
+  fsSprite.drawString("Long (1.25)",
+                      tft.width() / 2, 35, 4);
 
   fsSprite.pushSprite(0, 0);
   delay(4000);
@@ -160,19 +166,20 @@ void drawGradientLine(TFT_eSprite *targetLayer,
   steps = abs(x2 - x1) > abs(y2 - y1) ? abs(x2 - x1) : abs(y2 - y1);
   // if blandLvls came in as 0, use the line pixel length for step count
   if (blendLvls == 0) blendLvls = steps;
-  //  Serial.printf("x1 % i, y1 % i, x2 % i, y2 % i, steps % i, blendLvls % i\r\n",
-  //                x1, y2, x2, y1, steps, blendLvls);
+  //  Serial.printf("x1 % i, y1 % i, x2 % i, y2 % i, steps % i,
+  //                blendLvls % i\r\n", x1, y2, x2, y1, steps, blendLvls);
   x = x1; y = y1;
   for (int i = 0; i <= steps; i++) {
-    // Short Gradient -- if the gradient length is less than the length of the
-    //  line, just stick at 100% (1.0) until the end, thereby giving a larger
-    //  ending color area.  Sometimes, it seems like the ending color is too small
-    //  to do the graph justice.
+    // Short Gradient -- if the gradient length is less than the length
+    //  of the line, just stick at 100% (1.0) until the end, thereby
+    //  giving a larger ending color area.  Sometimes, it seems like the
+    //  ending color is too small to do the graph justice.
     if (blendLvls < i)
       blendLvls = 1.0;  // Stick at 100% if steps run out.
     else
-      pctBlend = (float)i / (float)blendLvls;  // else, use user supplied info.
-    blendedColor = alphaBlend((uint8_t)(pctBlend * 255), colorStart, colorEnd  );
+      pctBlend = (float)i / (float)blendLvls;  // or, user supplied info.
+    blendedColor = alphaBlend((uint8_t)(pctBlend * 255),
+                              colorStart, colorEnd);
     targetLayer->drawPixel(x, y, blendedColor);
 
     if ((x1 - x2) == 0) y2 > y1 ? y++ : y--;  // Am I drawing horizontal or
