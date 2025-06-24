@@ -13,6 +13,11 @@ void setup()
 /***************************************************************************/
 {
   Serial.begin(115200); delay(2000);
+
+  Serial.println("This is Gradient Lines Example sketch.");
+  Serial.println("Running from:");
+  Serial.println(__FILE__);
+
   tft.init();
   tft.setRotation(3);
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
